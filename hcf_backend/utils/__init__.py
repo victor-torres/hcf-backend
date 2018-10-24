@@ -3,6 +3,7 @@ import hashlib
 import six
 
 from scrapinghub.client import parse_auth
+from sh_scrapy.hsref import hsref
 
 
 def convert_from_bytes(data):
@@ -49,15 +50,33 @@ def assign_slotno(path, numslots):
 
 
 def get_project_id():
-    try:
-        return os.environ['SHUB_JOBKEY'].split('/')[0]
-    except KeyError:
-        pass
+    """
+    This method tries to extract the current project id from the environment.
+
+    It relies on the SHUB_JOBKEY environment variable to return an integer with
+    the current project id if available. It returns None otherwise.
+
+    :return: integer with project id or None.
+    """
+    return hsref.projectid
 
 
 def get_apikey():
-    """Provides a facade to the multiple behaviors of parse_auth() and forces
-    it to read the 'SH_APIKEY' env var and return it.
     """
+    This method tries to extract the current API key from the environment.
 
-    return parse_auth(None)[0]
+    It relies on the SHUB_JOBAUTH environment variable to return a native string
+    with the current project id if available. It returns None otherwise.
+
+    Native strings are bytes in Python 2 and unicode in Python 3.
+
+    For compatibility reasons, if the SH_APIKEY environment variable is defined,
+    we'll override the method's behavior and return this variable's parsed
+    content regardless of the SHUB_JOBAUTH environment variable being set.
+
+    :return: native string with API key or None.
+    """
+    if 'SH_APIKEY' in os.environ:
+        return parse_auth(None)[0]
+
+    return hsref.auth

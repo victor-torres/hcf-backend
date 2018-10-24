@@ -17,6 +17,7 @@ setup(
         'requests>=2.18.4',
         'retrying>=1.3.3',
         'scrapinghub>=2.0.0',
+        'scrapinghub-entrypoint-scrapy>=0.11.1',
     ),
     scripts = ["bin/hcfpal.py", "bin/hcfmanager.py"],
     classifiers = [
